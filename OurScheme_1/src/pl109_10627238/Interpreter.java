@@ -36,12 +36,12 @@ public class Interpreter {
       Node retNode = FindExp();
       Node bones = newSexp.Add_LeftChild( retNode );
       
-      boolean Is_Skip = false;
-      while ( retNode != null && !Is_Skip ) {
+      boolean is_Skip = false;
+      while ( retNode != null && !is_Skip ) {
         tmp = PeekNextToken();
         
         if ( tmp.mType == Symbol.sDOT || tmp.mType == Symbol.sR_PAREN ) {
-          Is_Skip = true;
+          is_Skip = true;
         } // if
         else {
           retNode = FindExp();
@@ -220,6 +220,7 @@ public class Interpreter {
     else if ( token.mType == Symbol.sT ) {
       return "#t";
     } // else if
+    
     return null;
   } // Evaluate()
   
@@ -258,7 +259,7 @@ class Node {
     mR_Child = new Node();
     mR_Child.mL_Child = node;
     return mR_Child;
-  } // Add_No_Dot_Child()
+  } // Add_NoDot_Child()
   
   public Node Add_Dot_Child( Node node ) {
     mR_Child = node;

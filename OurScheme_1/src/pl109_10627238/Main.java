@@ -21,7 +21,7 @@ public class Main {
           System.out.println( e.Get_Msg() );
           MyScanner.Get_Instance().ErrorReset();
         }
-        
+        // catch
       } // while
       
     } // try
@@ -36,6 +36,6 @@ public class Main {
       
     } // catch
     
-  } // main
+  } // main()
   
 } // class Main

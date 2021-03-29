@@ -9,7 +9,7 @@ class Symbol {
   
   public Symbol( String type ) {
     mTypeString = type;
-  } // Symbol
+  } // Symbol()
   
   public static Symbol sL_PAREN = new Symbol( "sL_PAREN" );
   public static Symbol sR_PAREN = new Symbol( "sR_PAREN" );

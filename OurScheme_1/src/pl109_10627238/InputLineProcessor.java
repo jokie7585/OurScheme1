@@ -72,6 +72,7 @@ public class InputLineProcessor {
         else {
           // integer or symbol or float
           Symbol tmpType = Symbol.sINT;
+          boolean findNumber = false;
           
           for ( int i = 0 ; i < buffer.length() ; i++ ) {
             
@@ -100,12 +101,23 @@ public class InputLineProcessor {
                 tmpType = Symbol.sSYMBOL;
               } // else
             } // else if
-            else {
-              // do nothing
+            else if ( buffer.charAt( i ) > '0' || buffer.charAt( i ) < '9' ) {
+              findNumber = true;
             } // else
           } // for
           
-          return new Token( buffer.toString(), tmpType );
+          if ( tmpType == Symbol.sFLOAT || tmpType == Symbol.sINT ) {
+            if ( findNumber ) {
+              return new Token( buffer.toString(), tmpType );
+            } // if
+            else {
+              return new Token( buffer.toString(), Symbol.sSYMBOL );
+            } // else
+          } // if
+          else {
+            return new Token( buffer.toString(), tmpType );
+          } // else
+          
         } // else
         
       } // else
@@ -127,7 +139,7 @@ public class InputLineProcessor {
   
   public void ResetCol() {
     mCol = 1;
-  } // ResetCol
+  } // ResetCol()
   
   public int PreToken_Col() {
     return mPreTokenCol;

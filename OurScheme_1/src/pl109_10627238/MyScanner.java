@@ -91,4 +91,4 @@ public class MyScanner {
     } // else
   } // ReadInALine()
   
-} // class MyScanner()
+} // class MyScanner

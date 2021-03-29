@@ -37,7 +37,7 @@ class NoclosingQuoteError extends Error {
     tmpBuffer.append( " Column " );
     tmpBuffer.append( Col );
     this.Set_Msg( tmpBuffer.toString() );
-  }
+  } // NoclosingQuoteError()
   
 } // class NoclosingQuoteError
 
@@ -73,12 +73,12 @@ class EOFEncounterError extends Error {
     super( "no more input" );
     
     this.Set_Msg( "END-OF-FILE encountered" );
-  }
+  } // EOFEncounterError()
 } // class EOFEncounterError
 
 class FinishProgramException extends Error {
   public FinishProgramException() {
     super( "End programe" );
     
-  }
+  } // FinishProgramException()
 } // class FinishProgramException
