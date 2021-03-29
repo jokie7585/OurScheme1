@@ -10,6 +10,7 @@ public class Interpreter {
     // check
     if ( rootNode.mL_Child != null && rootNode.mL_Child.mToken.mContent.equals( "exit" )
         && rootNode.mR_Child == null ) {
+      System.out.println( "" );
       throw new FinishProgramException();
     } // if
     
@@ -211,7 +212,7 @@ public class Interpreter {
     else if ( token.mType == Symbol.sFLOAT ) {
       return String.format( "%.3f", Float.parseFloat( token.mContent ) );
     } // else if
-    else if ( token.mType == Symbol.sSTRING || token.mType == Symbol.sSYMBOL ) {
+    else if ( token.mType == Symbol.sSYMBOL || token.mType == Symbol.sSTRING ) {
       return token.mContent;
     } // else if
     else if ( token.mType == Symbol.sNIL ) {

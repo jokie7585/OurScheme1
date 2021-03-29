@@ -103,11 +103,15 @@ public class InputLineProcessor {
             } // else if
             else if ( buffer.charAt( i ) > '0' || buffer.charAt( i ) < '9' ) {
               findNumber = true;
-            } // else
+            } // else if
           } // for
           
           if ( tmpType == Symbol.sFLOAT || tmpType == Symbol.sINT ) {
             if ( findNumber ) {
+              if ( buffer.charAt( 0 ) == '+' ) {
+                buffer.deleteCharAt( 0 );
+              } // if
+              
               return new Token( buffer.toString(), tmpType );
             } // if
             else {
@@ -182,10 +186,34 @@ public class InputLineProcessor {
     // append until separator or end of line
     while ( mInput.length() > 0 && mInput.charAt( 0 ) != '"' ) {
       if ( mInput.charAt( 0 ) == '\\' ) {
-        if ( mInput.length() > 1 && ( mInput.charAt( 1 ) == '"' || mInput.charAt( 1 ) == '\'' )
-            || mInput.charAt( 1 ) == '\n' || mInput.charAt( 1 ) == '\t' || mInput.charAt( 1 ) == '\\' ) {
-          tmpBuffer.append( ReadInAChar() );
-          tmpBuffer.append( ReadInAChar() );
+        if ( mInput.length() > 1 ) {
+          
+          if ( mInput.charAt( 1 ) == '"' ) {
+            ReadInAChar();
+            ReadInAChar();
+            tmpBuffer.append( '"' );
+          } // if
+          else if ( mInput.charAt( 1 ) == '\'' ) {
+            ReadInAChar();
+            ReadInAChar();
+            tmpBuffer.append( '\'' );
+          } // else if
+          else if ( mInput.charAt( 1 ) == 'n' ) {
+            ReadInAChar();
+            ReadInAChar();
+            tmpBuffer.append( '\n' );
+          } // else if
+          else if ( mInput.charAt( 1 ) == 't' ) {
+            ReadInAChar();
+            ReadInAChar();
+            tmpBuffer.append( '\t' );
+          } // else if
+          else if ( mInput.charAt( 1 ) == '\\' ) {
+            ReadInAChar();
+            ReadInAChar();
+            tmpBuffer.append( '\\' );
+          } // else if
+          
         } // if
         else {
           tmpBuffer.append( ReadInAChar() );
