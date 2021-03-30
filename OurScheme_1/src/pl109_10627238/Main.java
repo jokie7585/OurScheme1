@@ -17,10 +17,12 @@ public class Main {
         } // tru
         catch ( NoclosingQuoteError e ) {
           System.out.println( e.Get_Msg() );
+          System.out.println( "" );
           MyScanner.Get_Instance().ErrorReset();
         } // catch
         catch ( UnexpectedError e ) {
           System.out.println( e.Get_Msg() );
+          System.out.println( "" );
           MyScanner.Get_Instance().ErrorReset();
         }
         // catch

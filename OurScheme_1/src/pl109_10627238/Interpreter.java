@@ -34,28 +34,33 @@ public class Interpreter {
       // create new tree
       Node newSexp = new Node();
       // find first sEXP
-      Node retNode = FindExp();
-      Node bones = newSexp.Add_LeftChild( retNode );
-      
-      boolean is_Skip = false;
-      while ( retNode != null && !is_Skip ) {
-        tmp = PeekNextToken();
-        
-        if ( tmp.mType == Symbol.sDOT || tmp.mType == Symbol.sR_PAREN ) {
-          is_Skip = true;
-        } // if
-        else {
-          retNode = FindExp();
-          bones = bones.Add_NoDot_Child( retNode );
-        } // else
-        
-      } // while
-      
-      tmp = PeekNextToken();
-      if ( tmp.mType == Symbol.sDOT ) {
-        ComfirmNextToken();
+      Node retNode = null;
+      Node bones = null;
+      PeekNextToken();
+      if ( sTmpToken.mType != Symbol.sR_PAREN ) {
         retNode = FindExp();
-        bones.Add_Dot_Child( retNode );
+        bones = newSexp.Add_LeftChild( retNode );
+        
+        boolean is_Skip = false;
+        while ( retNode != null && !is_Skip ) {
+          tmp = PeekNextToken();
+          
+          if ( tmp.mType == Symbol.sDOT || tmp.mType == Symbol.sR_PAREN ) {
+            is_Skip = true;
+          } // if
+          else {
+            retNode = FindExp();
+            bones = bones.Add_NoDot_Child( retNode );
+          } // else
+          
+        } // while
+        
+        tmp = PeekNextToken();
+        if ( tmp.mType == Symbol.sDOT ) {
+          ComfirmNextToken();
+          retNode = FindExp();
+          bones.Add_Dot_Child( retNode );
+        } // if
       } // if
       
       tmp = PeekNextToken();
@@ -94,9 +99,14 @@ public class Interpreter {
   
   public static void Printer( Node root ) {
     if ( root.Is_Dot() ) {
-      System.out.print( "( " );
-      SubPrinter( root, 1 );
-      System.out.println( ")" );
+      if ( !root.Is_Nil() ) {
+        System.out.print( "( " );
+        SubPrinter( root, 1 );
+        System.out.println( ")" );
+      } // if
+      else {
+        System.out.println( "nil" );
+      } // else
     } // if
     else {
       if ( root.mIs_quote ) {
@@ -127,12 +137,18 @@ public class Interpreter {
     } // if
     else {
       if ( root.mL_Child.Is_Dot() ) {
-        System.out.print( "( " );
-        SubPrinter( root.mL_Child, level + 1 );
-        System.out.println( indent.toString() + ")" );
+        // check if nil
+        if ( !root.mL_Child.Is_Nil() ) {
+          System.out.print( "( " );
+          SubPrinter( root.mL_Child, level + 1 );
+          System.out.println( indent.toString() + ")" );
+        } // if
+        else {
+          System.out.println( "nil" );
+        } // else
+        
       } // if
       else {
-        // TODO if quote or not
         if ( root.mL_Child.mIs_quote ) {
           System.out.println( "( quote" );
           System.out.println( IndentGenerator( level + 1 ) + Evaluate( root.mL_Child.mToken ) );
@@ -148,27 +164,45 @@ public class Interpreter {
         root = root.mR_Child;
         
         if ( root.Is_Dot() ) {
-          if ( root.mL_Child.Is_Dot() ) {
-            System.out.print( IndentGenerator( level ) + "( " );
-            SubPrinter( root.mL_Child, level + 1 );
-            System.out.println( IndentGenerator( level ) + ")" );
-          } // if
-          else {
-            if ( !root.mL_Child.mIs_quote ) {
-              System.out.println( IndentGenerator( level ) + Evaluate( root.mL_Child.mToken ) );
+          if ( !root.Is_Nil() ) {
+            if ( root.mL_Child.Is_Dot() ) {
+              System.out.print( IndentGenerator( level ) + "( " );
+              SubPrinter( root.mL_Child, level + 1 );
+              System.out.println( IndentGenerator( level ) + ")" );
+              
             } // if
             else {
-              System.out.println( IndentGenerator( level ) + "( quote" );
-              System.out.println( IndentGenerator( level + 1 ) + Evaluate( root.mL_Child.mToken ) );
-              System.out.println( IndentGenerator( level ) + ")" );
+              if ( !root.mL_Child.mIs_quote ) {
+                System.out.println( IndentGenerator( level ) + Evaluate( root.mL_Child.mToken ) );
+              } // if
+              else {
+                System.out.println( IndentGenerator( level ) + "( quote" );
+                System.out.println( IndentGenerator( level + 1 ) + Evaluate( root.mL_Child.mToken ) );
+                System.out.println( IndentGenerator( level ) + ")" );
+              } // else
+            } // else
+          } // if
+          else {
+            if ( !root.mIs_quote ) {
+              // print nothing
+            } // if
+            else {
+              System.out.println( IndentGenerator( level ) + "quote" );
+              System.out.println( IndentGenerator( level ) + "nil" );
             } // else
           } // else
         } // if
         else {
           // last node
           if ( !root.mIs_quote ) {
-            System.out.println( IndentGenerator( level ) + "." );
-            System.out.println( IndentGenerator( level ) + Evaluate( root.mToken ) );
+            if ( root.mToken.mType == Symbol.sNIL ) {
+              // print nothings
+            } // if
+            else {
+              System.out.println( IndentGenerator( level ) + "." );
+              System.out.println( IndentGenerator( level ) + Evaluate( root.mToken ) );
+            } // else
+            
           } // if
           else {
             System.out.println( IndentGenerator( level ) + "quote" );
@@ -250,6 +284,14 @@ class Node {
     
     return false;
   } // Is_Dot()
+  
+  public boolean Is_Nil() {
+    if ( mToken.mType == Symbol.sDOT && mL_Child == null ) {
+      return true;
+    } // if
+    
+    return false;
+  } // Is_Nil()
   
   public Node Add_LeftChild( Node node ) {
     mL_Child = node;

@@ -61,6 +61,7 @@ public class MyScanner {
     } // if
     else {
       mLine = 1;
+      mTokenStream.ResetCol();
     } // else
     
   } // FinishReset()
