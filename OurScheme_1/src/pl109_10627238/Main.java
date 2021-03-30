@@ -6,11 +6,13 @@ public class Main {
   public static void main( String[] args ) throws Throwable {
     try {
       System.out.println( "Welcome to OurScheme!" );
+      System.out.println( "" );
       System.out.print( "> " );
       
       while ( true ) {
         try {
           Interpreter.ReadSexp();
+          System.out.println( "" );
           System.out.print( "> " );
         } // tru
         catch ( NoclosingQuoteError e ) {

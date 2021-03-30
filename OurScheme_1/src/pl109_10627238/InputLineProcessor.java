@@ -213,6 +213,10 @@ public class InputLineProcessor {
             ReadInAChar();
             tmpBuffer.append( '\\' );
           } // else if
+          else {
+            ReadInAChar();
+            tmpBuffer.append( '\\' );
+          } // else
           
         } // if
         else {
