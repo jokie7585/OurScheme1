@@ -133,6 +133,9 @@ public class InputLineProcessor {
   } // Next()
   
   public boolean Is_Empty() {
+    SkipWhiteSapce();
+    IngnoreComment();
+    
     if ( mInput.length() > 0 ) {
       return false;
     } // if
@@ -157,10 +160,17 @@ public class InputLineProcessor {
   } // ReadInAChar()
   
   private void SkipWhiteSapce() {
-    while ( !Is_Empty() && Is_Whatespace( mInput.charAt( 0 ) ) ) {
+    while ( mInput.length() > 0 && Is_Whatespace( mInput.charAt( 0 ) ) ) {
       ReadInAChar();
     } // while
   } // SkipWhiteSapce()
+  
+  private void IngnoreComment() {
+    SkipWhiteSapce();
+    if ( mInput.length() > 0 && mInput.charAt( 0 ) == ';' ) {
+      mInput = new StringBuffer();
+    } // if
+  } // IngnoreComment()
   
   private boolean Is_Seperator( char s ) {
     if ( s == ' ' || s == '\t' || s == '(' || s == ')' || s == '\'' || s == '"' || s == ';' ) {
