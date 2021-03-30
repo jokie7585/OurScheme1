@@ -56,12 +56,13 @@ public class MyScanner {
   public void FinishReset() throws Throwable {
     // if cur token stream not empty reset m line to 1
     // else reset to 0
+    mTokenStream.ResetCol();
+    
     if ( mTokenStream.Is_Empty() ) {
       mLine = 0;
     } // if
     else {
       mLine = 1;
-      mTokenStream.ResetCol();
     } // else
     
   } // FinishReset()
