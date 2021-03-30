@@ -5,11 +5,17 @@ import java.util.Vector;
 public class Interpreter {
   private static Token sTmpToken;
   
+  // there three type of nil
+  // first type is a dot node with no child
+  // second symbol
+  // third is the null pointer at end of Sexp tree
+  
   public static void ReadSexp() throws Throwable {
     Node rootNode = FindExp();
     // check
     if ( rootNode.mL_Child != null && rootNode.mL_Child.mToken.mContent.equals( "exit" )
-        && rootNode.mR_Child == null ) {
+        && ( rootNode.mR_Child == null || rootNode.mR_Child.Is_Nil()
+            || rootNode.mR_Child.mToken.mType == Symbol.sNIL ) ) {
       System.out.println( "" );
       throw new FinishProgramException();
     } // if
