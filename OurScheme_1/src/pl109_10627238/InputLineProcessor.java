@@ -13,10 +13,10 @@ public class InputLineProcessor {
   } // InputLineProcessor()
   
   public Token Next() throws Throwable {
-    SkipWhiteSapce();
-    mPreTokenCol = mCol;
     
     if ( !Is_Empty() ) {
+      mPreTokenCol = mCol;
+      
       if ( mInput.charAt( 0 ) == ';' ) {
         // clean the input buffer
         mInput = new StringBuffer();
@@ -49,7 +49,8 @@ public class InputLineProcessor {
       else {
         // integer or symbol or float or dot or t or nil
         StringBuffer buffer = new StringBuffer();
-        while ( !Is_Empty() && !Is_Seperator( mInput.charAt( 0 ) ) ) {
+        while ( mInput.length() > 0
+            && ( !Is_Seperator( mInput.charAt( 0 ) ) && !Is_Whatespace( mInput.charAt( 0 ) ) ) ) {
           buffer.append( ReadInAChar() );
         } // while
         
