@@ -118,7 +118,7 @@ public class Interpreter {
         System.out.println( ")" );
       } // if
       else {
-        System.out.println( "nil" );
+        QuoteAtomPrinter( root, 0, false );
       } // else
     } // if
     else {
@@ -202,13 +202,14 @@ public class Interpreter {
               // print nothing
             } // if
             else {
+              // last node
+              root.De_quote();
               System.out.println( IndentGenerator( level ) + "quote" );
-              System.out.println( IndentGenerator( level ) + "nil" );
+              QuoteAtomPrinter( root, level, false );
             } // else
           } // else
         } // if
         else {
-          // last node
           if ( !root.mIs_quote ) {
             if ( root.mToken.mType == Symbol.sNIL ) {
               // print nothings
@@ -220,17 +221,11 @@ public class Interpreter {
             
           } // if
           else {
-            while ( root.De_quote() ) {
-              System.out.println( IndentGenerator( level ) + "quote" );
-              
-            } // while
             
-            if ( root.Is_Nil() ) {
-              System.out.println( IndentGenerator( level ) + "nil" );
-            } // if
-            else {
-              System.out.println( IndentGenerator( level ) + Evaluate( root.mToken ) );
-            } // else
+            // last node
+            root.De_quote();
+            System.out.println( IndentGenerator( level ) + "quote" );
+            QuoteAtomPrinter( root, level, false );
             
           } // else
         } // else
