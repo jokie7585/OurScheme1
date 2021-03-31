@@ -13,14 +13,21 @@ public class Interpreter {
   public static void ReadSexp() throws Throwable {
     Node rootNode = FindExp();
     // check
-    if ( rootNode.mL_Child != null && rootNode.mL_Child.mToken.mContent.equals( "exit" )
-        && ( rootNode.mR_Child == null || rootNode.mR_Child.Is_Nil()
-            || rootNode.mR_Child.mToken.mType == Symbol.sNIL ) ) {
-      System.out.println( "" );
-      throw new FinishProgramException();
+    if ( rootNode.mL_Child != null && rootNode.mL_Child.mToken.mContent.equals( "exit" ) ) {
+      if ( rootNode.mR_Child == null ) {
+        System.out.println( "" );
+        throw new FinishProgramException();
+      } // if
+      else {
+        if ( rootNode.mR_Child.Is_Nil() || rootNode.mR_Child.mToken.mType == Symbol.sNIL ) {
+          System.out.println( "" );
+          throw new FinishProgramException();
+        } // if
+      } // else
+      
     } // if
     
-    Printer( rootNode );
+    Printer( rootNode, 1 );
     MyScanner.Get_Instance().FinishReset();
   } // ReadSexp()
   
@@ -30,7 +37,7 @@ public class Interpreter {
     if ( tmp.mType == Symbol.sQUOTE ) {
       ComfirmNextToken();
       Node retNode = FindExp();
-      retNode.mIs_quote = true;
+      retNode.Quote();
       return retNode;
       
     } // if
@@ -103,11 +110,11 @@ public class Interpreter {
     
   } // FindExp()
   
-  public static void Printer( Node root ) {
+  public static void Printer( Node root, int base ) {
     if ( root.Is_Dot() ) {
       if ( !root.Is_Nil() ) {
         System.out.print( "( " );
-        SubPrinter( root, 1 );
+        SubPrinter( root, base );
         System.out.println( ")" );
       } // if
       else {
@@ -116,9 +123,15 @@ public class Interpreter {
     } // if
     else {
       if ( root.mIs_quote ) {
-        System.out.println( "( quote" );
-        System.out.println( "  " + Evaluate( root.mToken ) );
-        System.out.println( ")" );
+        if ( root.De_quote() ) {
+          System.out.println( IndentGenerator( base - 1 ) + "( quote" );
+          Printer( root, base + 1 );
+          System.out.println( IndentGenerator( base - 1 ) + ")" );
+        } // if
+        else {
+          System.out.println( IndentGenerator( base ) + Evaluate( root.mToken ) );
+        } // else
+        
       } // if
       else {
         System.out.println( Evaluate( root.mToken ) );
@@ -134,7 +147,7 @@ public class Interpreter {
     } // for
     
     // remove quote
-    if ( root.mIs_quote ) {
+    if ( root.De_quote() ) {
       root.mIs_quote = false;
       System.out.println( "quote" );
       System.out.print( indent.toString() + "( " );
@@ -156,9 +169,12 @@ public class Interpreter {
       } // if
       else {
         if ( root.mL_Child.mIs_quote ) {
-          System.out.println( "( quote" );
-          System.out.println( IndentGenerator( level + 1 ) + Evaluate( root.mL_Child.mToken ) );
-          System.out.println( IndentGenerator( level ) + ")" );
+          QuoteAtomPrinter( root.mL_Child, level, true );
+          // old code below
+          // System.out.println( "( quote" );
+          // System.out.println( IndentGenerator( level + 1 ) + Evaluate(
+          // root.mL_Child.mToken ) );
+          // System.out.println( IndentGenerator( level ) + ")" );
         } // if
         else {
           System.out.println( Evaluate( root.mL_Child.mToken ) );
@@ -182,9 +198,13 @@ public class Interpreter {
                 System.out.println( IndentGenerator( level ) + Evaluate( root.mL_Child.mToken ) );
               } // if
               else {
-                System.out.println( IndentGenerator( level ) + "( quote" );
-                System.out.println( IndentGenerator( level + 1 ) + Evaluate( root.mL_Child.mToken ) );
-                System.out.println( IndentGenerator( level ) + ")" );
+                QuoteAtomPrinter( root.mL_Child, level, false );
+                // old code below
+                
+                // System.out.println( IndentGenerator( level ) + "( quote" );
+                // System.out.println( IndentGenerator( level + 1 ) + Evaluate(
+                // root.mL_Child.mToken ) );
+                // System.out.println( IndentGenerator( level ) + ")" );
               } // else
             } // else
           } // if
@@ -211,7 +231,11 @@ public class Interpreter {
             
           } // if
           else {
-            System.out.println( IndentGenerator( level ) + "quote" );
+            while ( root.De_quote() ) {
+              System.out.println( IndentGenerator( level ) + "quote" );
+              
+            } // while
+            
             System.out.println( IndentGenerator( level ) + Evaluate( root.mToken ) );
           } // else
         } // else
@@ -220,6 +244,31 @@ public class Interpreter {
     } // else
     
   } // SubPrinter()
+  
+  private static void QuoteAtomPrinter( Node node, int level, boolean is_first ) {
+    if ( is_first ) {
+      if ( node.De_quote() ) {
+        System.out.println( "( quote" );
+        QuoteAtomPrinter( node, level + 1, false );
+        System.out.println( IndentGenerator( level ) + ")" );
+      } // if
+      else {
+        System.out.println( IndentGenerator( level ) + Evaluate( node.mToken ) );
+      } // else
+      
+    } // if
+    else {
+      if ( node.De_quote() ) {
+        System.out.println( IndentGenerator( level ) + "( quote" );
+        QuoteAtomPrinter( node, level + 1, false );
+        System.out.println( IndentGenerator( level ) + ")" );
+      } // if
+      else {
+        System.out.println( IndentGenerator( level ) + Evaluate( node.mToken ) );
+      } // else
+      
+    } // else
+  } // QuoteAtomPrinter()
   
   private static String IndentGenerator( int level ) {
     int indentCounter = level * 2;
@@ -272,16 +321,34 @@ class Node {
   public Node mR_Child;
   public Token mToken;
   public boolean mIs_quote;
+  int mQuoteCounter;
   
   public Node() {
     mToken = new Token( ".", Symbol.sDOT );
     mIs_quote = false;
+    mQuoteCounter = 0;
   } // Node()
   
   public Node( Token token ) {
     mToken = token;
     mIs_quote = false;
   } // Node()
+  
+  public void Quote() {
+    mIs_quote = true;
+    mQuoteCounter++;
+  } // Quote()
+  
+  public boolean De_quote() {
+    if ( mQuoteCounter > 0 ) {
+      mQuoteCounter--;
+      return true;
+    } // if
+    else {
+      mIs_quote = false;
+      return false;
+    } // else
+  } // De_quote()
   
   public boolean Is_Dot() {
     if ( mToken.mType == Symbol.sDOT ) {
