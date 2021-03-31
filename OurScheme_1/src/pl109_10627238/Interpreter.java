@@ -170,11 +170,7 @@ public class Interpreter {
       else {
         if ( root.mL_Child.mIs_quote ) {
           QuoteAtomPrinter( root.mL_Child, level, true );
-          // old code below
-          // System.out.println( "( quote" );
-          // System.out.println( IndentGenerator( level + 1 ) + Evaluate(
-          // root.mL_Child.mToken ) );
-          // System.out.println( IndentGenerator( level ) + ")" );
+          
         } // if
         else {
           System.out.println( Evaluate( root.mL_Child.mToken ) );
@@ -199,12 +195,7 @@ public class Interpreter {
               } // if
               else {
                 QuoteAtomPrinter( root.mL_Child, level, false );
-                // old code below
                 
-                // System.out.println( IndentGenerator( level ) + "( quote" );
-                // System.out.println( IndentGenerator( level + 1 ) + Evaluate(
-                // root.mL_Child.mToken ) );
-                // System.out.println( IndentGenerator( level ) + ")" );
               } // else
             } // else
           } // if
