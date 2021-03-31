@@ -177,9 +177,14 @@ public class Interpreter {
         if ( root.Is_Dot() ) {
           if ( !root.Is_Nil() ) {
             if ( root.mL_Child.Is_Dot() ) {
-              System.out.print( IndentGenerator( level ) + "( " );
-              SubPrinter( root.mL_Child, level + 1 );
-              System.out.println( IndentGenerator( level ) + ")" );
+              if ( root.mL_Child.Is_Nil() ) {
+                QuoteAtomPrinter( root.mL_Child, level, false );
+              } // if
+              else {
+                System.out.print( IndentGenerator( level ) + "( " );
+                SubPrinter( root.mL_Child, level + 1 );
+                System.out.println( IndentGenerator( level ) + ")" );
+              } // else
               
             } // if
             else {
@@ -237,7 +242,12 @@ public class Interpreter {
         System.out.println( IndentGenerator( level ) + ")" );
       } // if
       else {
-        System.out.println( IndentGenerator( level ) + Evaluate( node.mToken ) );
+        if ( node.Is_Nil() ) {
+          System.out.println( IndentGenerator( level ) + "nil" );
+        } // if
+        else {
+          System.out.println( IndentGenerator( level ) + Evaluate( node.mToken ) );
+        } // else
       } // else
       
     } // if
@@ -248,7 +258,13 @@ public class Interpreter {
         System.out.println( IndentGenerator( level ) + ")" );
       } // if
       else {
-        System.out.println( IndentGenerator( level ) + Evaluate( node.mToken ) );
+        if ( node.Is_Nil() ) {
+          System.out.println( IndentGenerator( level ) + "nil" );
+        } // if
+        else {
+          System.out.println( IndentGenerator( level ) + Evaluate( node.mToken ) );
+        } // else
+        
       } // else
       
     } // else
