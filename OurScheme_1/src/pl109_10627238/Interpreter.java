@@ -123,14 +123,7 @@ public class Interpreter {
     } // if
     else {
       if ( root.mIs_quote ) {
-        if ( root.De_quote() ) {
-          System.out.println( IndentGenerator( base - 1 ) + "( quote" );
-          Printer( root, base + 1 );
-          System.out.println( IndentGenerator( base - 1 ) + ")" );
-        } // if
-        else {
-          System.out.println( IndentGenerator( base ) + Evaluate( root.mToken ) );
-        } // else
+        QuoteAtomPrinter( root, 0, false );
         
       } // if
       else {
