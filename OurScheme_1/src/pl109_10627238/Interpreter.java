@@ -225,7 +225,13 @@ public class Interpreter {
               
             } // while
             
-            System.out.println( IndentGenerator( level ) + Evaluate( root.mToken ) );
+            if ( root.Is_Nil() ) {
+              System.out.println( IndentGenerator( level ) + "nil" );
+            } // if
+            else {
+              System.out.println( IndentGenerator( level ) + Evaluate( root.mToken ) );
+            } // else
+            
           } // else
         } // else
         
