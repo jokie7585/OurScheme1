@@ -156,7 +156,7 @@ public class Interpreter {
           System.out.println( indent.toString() + ")" );
         } // if
         else {
-          System.out.println( "nil" );
+          QuoteAtomPrinter( root.mL_Child, level, true );
         } // else
         
       } // if
